@@ -4,7 +4,7 @@ import { sessionHint, tokenStorage } from '../utils/storage'
 export const UNAUTHORIZED_EVENT = 'auth:unauthorized'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 15000,
   // No fixed Content-Type: axios sets JSON for objects and lets the browser set
   // multipart/form-data (with boundary) for FormData uploads.
