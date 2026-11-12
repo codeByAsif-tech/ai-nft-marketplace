@@ -1,0 +1,16 @@
+node_modules/
+
+# Hardhat build output
+artifacts/
+cache/
+types/
+coverage/
+dist/
+
+# Local/simulated deployments (chain 31337) are throwaway
+ignition/deployments/chain-31337/
+
+# Secrets: never commit
+.env
+.env.*
+!.env.example

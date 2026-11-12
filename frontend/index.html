@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Generate AI artwork, mint NFTs and trade them on Ethereum Sepolia and Base Sepolia." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Mintverse — AI NFT Marketplace</title>
+    <script>
+      // Apply the saved theme before the page paints (prevents a light/dark flash).
+      // Must match ThemeContext: stored preference is 'light' | 'dark' (default 'light').
+      ;(function () {
+        var pref = 'light'
+        try {
+          pref = localStorage.getItem('mintverse.theme') || 'light'
+        } catch (e) {}
+        var dark = pref === 'dark'
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

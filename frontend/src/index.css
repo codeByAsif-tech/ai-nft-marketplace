@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/*
+ * THEMING
+ * Components use a small set of color names; this file decides what they look
+ * like in each theme. Dark is the base (@theme below). The light theme
+ * (html[data-theme="light"]) re-points the same names to light-theme values:
+ *
+ *   ink-950 / 900 / 800 / 700   page background / cards / inputs & panels / hover
+ *   white  (text-white, border-white/10, bg-white/5)   = primary INK, i.e. text and
+ *          subtle overlays. In light mode it is near-black, so "white/10" borders
+ *          become soft dark borders automatically.
+ *   slate-100..500              body / secondary / muted text
+ *   *-200 / *-300 accents       tinted text on tinted backgrounds (darkened in light)
+ *   on-accent                   text/icons that must stay white in BOTH themes
+ *                               (on violet buttons, solid badges, avatars)
+ *
+ * The theme is chosen by ThemeContext (Light / Dark / System) and applied
+ * before first paint by a small script in index.html (no flash).
+ */
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink-950: #07070c;
+  --color-ink-900: #0d0d16;
+  --color-ink-800: #15151f;
+  --color-ink-700: #1f1f2c;
+  --color-ink-600: #2c2c3d;
+
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+
+  --color-accent-400: #22d3ee;
+  --color-accent-500: #06b6d4;
+
+  --color-on-accent: #ffffff;
+}
+
+/* ---------------------------------------------------------------- light theme */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* surfaces */
+  --color-ink-950: #f5f6fb; /* page */
+  --color-ink-900: #ffffff; /* cards */
+  --color-ink-800: #f0f2f8; /* inputs, inner panels */
+  --color-ink-700: #e5e8f1;
+  --color-ink-600: #d4d8e4;
+
+  /* primary ink (text-white, border-white/x, bg-white/x) */
+  --color-white: #12142a;
+
+  /* text scale */
+  --color-slate-100: #1b1e33;
+  --color-slate-200: #23273d;
+  --color-slate-300: #383d55;
+  --color-slate-400: #565d76;
+  --color-slate-500: #6b7189;
+
+  /* tinted accent text: darker so it stays readable on light backgrounds */
+  --color-brand-200: #5b21b6;
+  --color-brand-300: #6d28d9;
+  --color-emerald-200: #065f46;
+  --color-emerald-300: #047857;
+  --color-red-200: #991b1b;
+  --color-red-300: #b91c1c;
+  --color-amber-100: #78350f;
+  --color-amber-200: #92400e;
+  --color-amber-300: #b45309;
+  --color-cyan-100: #164e63;
+  --color-cyan-200: #155e75;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    @apply bg-ink-950 font-sans text-slate-200 antialiased;
+    min-height: 100svh;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display text-white;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-400;
+  }
+
+  /* Edge adds its own password "reveal" eye; hide it so our toggle isn't doubled. */
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
+}
+
+@utility text-gradient {
+  @apply bg-gradient-to-r from-brand-300 via-brand-400 to-accent-400 bg-clip-text text-transparent;
+}
+
+@utility card {
+  @apply rounded-2xl border border-white/10 bg-ink-900/70 backdrop-blur;
+}
+
+/* Cards float on the light page with a soft shadow instead of glowing borders. */
+:root[data-theme="light"] .card {
+  background-color: var(--color-ink-900);
+  box-shadow:
+    0 1px 2px rgb(18 20 42 / 0.05),
+    0 10px 30px -14px rgb(18 20 42 / 0.18);
+}

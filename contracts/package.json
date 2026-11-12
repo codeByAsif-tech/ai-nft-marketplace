@@ -1,0 +1,36 @@
+{
+  "name": "ai-nft-marketplace-contracts",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Solidity contracts (NFTCollection, NFTMarketplace) built with Hardhat 3, OpenZeppelin and ethers",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node",
+    "deploy:sim": "hardhat ignition deploy ignition/modules/Marketplace.ts",
+    "deploy:local": "hardhat ignition deploy ignition/modules/Marketplace.ts --network localhost",
+    "deploy:local:reset": "hardhat ignition deploy ignition/modules/Marketplace.ts --network localhost --reset",
+    "clean": "hardhat clean"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.6.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^4.2.2",
+    "@nomicfoundation/hardhat-ignition": "^3.1.9",
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^4.0.0",
+    "@types/chai": "^5.2.3",
+    "@types/chai-as-promised": "^8.0.1",
+    "@types/mocha": ">=10.0.10",
+    "@types/node": "^22.8.5",
+    "chai": "^6.2.2",
+    "ethers": "^6.17.0",
+    "hardhat": "^3.21.2",
+    "mocha": "^12.0.0",
+    "typescript": "~6.0.3"
+  }
+}
