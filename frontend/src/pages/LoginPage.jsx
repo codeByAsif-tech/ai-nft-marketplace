@@ -6,6 +6,7 @@ import Button from '../components/ui/Button'
 import FormField from '../components/ui/FormField'
 import { useAuth } from '../hooks/useAuth'
 import { parseApiError } from '../services/api'
+import {Link} from 'react-router-dom'
 
 export default function LoginPage() {
   const { login } = useAuth()
