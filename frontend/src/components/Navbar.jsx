@@ -128,14 +128,9 @@ export default function Navbar() {
               />
             </>
           ) : (
-            <>
-              <Button variant="ghost" size="sm" to="/login">
-                Log in
-              </Button>
-              <Button size="sm" to="/register">
-                Get started
-              </Button>
-            </>
+            <Button variant="ghost" size="sm" to="/login">
+              Log in
+            </Button>
           )}
         </div>
 
@@ -216,9 +211,6 @@ export default function Navbar() {
               <div className="flex gap-2">
                 <Button variant="secondary" size="sm" className="flex-1" to="/login" onClick={closeMobile}>
                   Log in
-                </Button>
-                <Button size="sm" className="flex-1" to="/register" onClick={closeMobile}>
-                  Get started
                 </Button>
               </div>
             )}

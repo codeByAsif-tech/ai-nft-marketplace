@@ -3,8 +3,8 @@ import PageLoader from '../components/ui/PageLoader'
 import { useAuth } from '../hooks/useAuth'
 
 /**
- * Login/register pages. Signed-in users are sent back to the page they
- * originally requested (set by ProtectedRoute), or to the dashboard.
+ * Guest-only pages. Signed-in users are sent back to the page they originally
+ * requested (set by ProtectedRoute), or to the dashboard.
  */
 export default function GuestRoute() {
   const { isAuthenticated, initializing } = useAuth()

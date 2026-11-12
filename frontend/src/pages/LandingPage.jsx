@@ -48,14 +48,9 @@ export default function LandingPage() {
               </Button>
             </>
           ) : (
-            <>
-              <Button size="lg" to="/register">
-                Create free account
-              </Button>
-              <Button size="lg" variant="secondary" to="/explore">
-                Explore NFTs
-              </Button>
-            </>
+            <Button size="lg" variant="secondary" to="/explore">
+              Explore NFTs
+            </Button>
           )}
         </div>
 

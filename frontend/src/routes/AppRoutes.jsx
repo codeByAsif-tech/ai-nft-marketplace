@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import MainLayout from '../layouts/MainLayout'
 import ActivityPage from '../pages/ActivityPage'
 import DashboardPage from '../pages/DashboardPage'
@@ -14,7 +14,6 @@ import MyNftsPage from '../pages/MyNftsPage'
 import StudioPage from '../pages/StudioPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import ProfilePage from '../pages/ProfilePage'
-import RegisterPage from '../pages/RegisterPage'
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage'
 import AdminUsersPage from '../pages/admin/AdminUsersPage'
 import AdminRoute from './AdminRoute'
@@ -33,9 +32,9 @@ export default function AppRoutes() {
 
         <Route element={<GuestRoute />}>
           <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
         </Route>
+        <Route path="register" element={<Navigate to="/login" replace />} />
 
         {/* Opened from email links: work whether or not someone is logged in. */}
         <Route path="verify-email" element={<VerifyEmailPage />} />

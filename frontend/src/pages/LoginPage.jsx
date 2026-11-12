@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import AuthCard from '../components/AuthCard'
 import ResendVerificationButton from '../components/ResendVerificationButton'
 import Alert from '../components/ui/Alert'
@@ -45,14 +44,6 @@ export default function LoginPage() {
     <AuthCard
       title="Welcome back"
       subtitle="Log in to create, mint and trade your NFTs."
-      footer={
-        <>
-          New here?{' '}
-          <Link to="/register" className="font-medium text-brand-300 hover:text-brand-200">
-            Create an account
-          </Link>
-        </>
-      }
     >
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <Alert>{error}</Alert>
