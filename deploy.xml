@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Deployment descriptor for the AI NFT marketplace (Mintverse).
+  Deploy contracts first, then the API (it needs the contract addresses),
+  then the frontend (VITE_* values are baked in at build time).
+  Secrets are names only. Set them in the host environment, never in this file.
+-->
+<deployment project="ai-nft-marketplace" name="Mintverse">
+
+  <runtime>
+    <node minVersion="22"/>
+    <node package="contracts" minVersion="22.13.0"/>
+  </runtime>
+
+  <components>
+
+    <component id="contracts" path="contracts" runtime="node">
+      <description>NFTCollection and NFTMarketplace (Hardhat 3, Solidity 0.8.34).</description>
+      <install>npm install</install>
+      <build>npm run compile</build>
+      <test>npm test</test>
+      <networks>
+        <network id="localhost" chainId="31337" rpc="http://127.0.0.1:8545" production="false">
+          <start>npm run node</start>
+          <deploy>npm run deploy:local</deploy>
+          <redeploy>npm run deploy:local:reset</redeploy>
+        </network>
+        <network id="sepolia" chainId="11155111" production="false">
+          <deploy>npx hardhat ignition deploy ignition/modules/Marketplace.ts --network sepolia</deploy>
+        </network>
+        <network id="baseSepolia" chainId="84532" production="false">
+          <deploy>npx hardhat ignition deploy ignition/modules/Marketplace.ts --network baseSepolia</deploy>
+        </network>
+      </networks>
+      <outputs>
+        <output name="nftContract" env="SEPOLIA_NFT_CONTRACT,BASE_SEPOLIA_NFT_CONTRACT,HARDHAT_NFT_CONTRACT"/>
+        <output name="marketplaceContract" env="SEPOLIA_MARKETPLACE_CONTRACT,BASE_SEPOLIA_MARKETPLACE_CONTRACT,HARDHAT_MARKETPLACE_CONTRACT"/>
+      </outputs>
+    </component>
+
+    <component id="backend" path="backend" runtime="node" dependsOn="contracts,mongodb">
+      <description>Express API. Listens on PORT (default 5000) at /api.</description>
+      <install>npm install</install>
+      <start>npm start</start>
+      <dev>npm run dev</dev>
+      <test>npm test</test>
+      <listen port="5000" path="/api"/>
+      <process>node src/server.js</process>
+      <health>GET /api</health>
+      <env>
+        <variable name="NODE_ENV" required="true" example="production"/>
+        <variable name="PORT" required="false" default="5000"/>
+        <variable name="MONGODB_URI" required="true"/>
+        <variable name="JWT_SECRET" required="true" note="At least 32 characters"/>
+        <variable name="JWT_EXPIRES_IN" required="false" default="15m"/>
+        <variable name="CORS_ORIGINS" required="true" note="Comma-separated frontend origins"/>
+        <variable name="APP_ORIGIN" required="true" note="Public frontend URL used in emails"/>
+        <variable name="TRUST_PROXY" required="false" default="1"/>
+        <variable name="SMTP_HOST" required="true" when="production"/>
+        <variable name="SMTP_PORT" required="false" default="587"/>
+        <variable name="SMTP_SECURE" required="false" default="false"/>
+        <variable name="SMTP_USER" required="false"/>
+        <variable name="SMTP_PASS" required="false" secret="true"/>
+        <variable name="EMAIL_FROM" required="false" default="Mintverse &lt;no-reply@example.com&gt;"/>
+        <variable name="SEPOLIA_RPC_URL" required="false"/>
+        <variable name="SEPOLIA_NFT_CONTRACT" required="false"/>
+        <variable name="SEPOLIA_MARKETPLACE_CONTRACT" required="false"/>
+        <variable name="BASE_SEPOLIA_RPC_URL" required="false"/>
+        <variable name="BASE_SEPOLIA_NFT_CONTRACT" required="false"/>
+        <variable name="BASE_SEPOLIA_MARKETPLACE_CONTRACT" required="false"/>
+        <variable name="PINATA_JWT" required="false" secret="true"/>
+        <variable name="IPFS_GATEWAY_URL" required="false" default="https://ipfs.io/ipfs"/>
+        <variable name="GROQ_API_KEY" required="false" secret="true"/>
+        <variable name="AI_TEXT_PROVIDER" required="false" default="groq"/>
+        <variable name="AI_IMAGE_PROVIDER" required="false" default="none"/>
+        <variable name="UPLOAD_DIR" required="false" default="uploads"/>
+        <variable name="MAX_UPLOAD_MB" required="false" default="10"/>
+      </env>
+      <postDeploy>
+        <command cwd="backend">npm run seed:admin</command>
+      </postDeploy>
+    </component>
+
+    <component id="frontend" path="frontend" runtime="static" dependsOn="backend">
+      <description>Vite + React app. Dev server on port 5173. Production is a static build.</description>
+      <install>npm install</install>
+      <build>npm run build</build>
+      <output>frontend/dist</output>
+      <dev port="5173">npm run dev</dev>
+      <preview>npm run preview</preview>
+      <test>npm test</test>
+      <hosting>
+        <staticRoot>dist</staticRoot>
+        <spaFallback>index.html</spaFallback>
+      </hosting>
+      <env note="Set before npm run build. Vite inlines these into the bundle.">
+        <variable name="VITE_API_URL" required="true" example="https://api.example.com/api"/>
+        <variable name="VITE_SEPOLIA_RPC_URL" required="false"/>
+        <variable name="VITE_BASE_SEPOLIA_RPC_URL" required="false"/>
+        <variable name="VITE_ENABLE_LOCAL_CHAIN" required="false" default="false" note="Dev only"/>
+      </env>
+    </component>
+
+    <component id="mongodb" runtime="external">
+      <description>MongoDB used by the API via MONGODB_URI.</description>
+    </component>
+
+  </components>
+
+  <environments>
+
+    <environment name="local">
+      <step order="1" component="contracts">npm install &amp;&amp; npm run compile &amp;&amp; npm run node</step>
+      <step order="2" component="contracts">npm run deploy:local</step>
+      <step order="3" component="mongodb">Start MongoDB and set MONGODB_URI</step>
+      <step order="4" component="backend">Copy contract addresses into HARDHAT_NFT_CONTRACT and HARDHAT_MARKETPLACE_CONTRACT, then npm install &amp;&amp; npm run dev</step>
+      <step order="5" component="frontend">Set VITE_API_URL=http://localhost:5000/api, then npm install &amp;&amp; npm run dev</step>
+      <urls>
+        <url component="frontend">http://localhost:5173</url>
+        <url component="backend">http://localhost:5000/api</url>
+        <url component="contracts">http://127.0.0.1:8545</url>
+      </urls>
+    </environment>
+
+    <environment name="production">
+      <step order="1" component="contracts">npm ci &amp;&amp; npm run compile</step>
+      <step order="2" component="contracts">Deploy Marketplace.ts to the target testnet and record both contract addresses</step>
+      <step order="3" component="backend">Set production env (including contract addresses, MONGODB_URI, JWT_SECRET, SMTP_HOST, CORS_ORIGINS, APP_ORIGIN), then npm ci &amp;&amp; npm start</step>
+      <step order="4" component="frontend">Set VITE_API_URL to the public API origin plus /api, then npm ci &amp;&amp; npm run build</step>
+      <step order="5" component="frontend">Publish frontend/dist with SPA fallback to index.html</step>
+      <step order="6" component="backend">npm run seed:admin</step>
+      <checks>
+        <check>API process is listening and CORS_ORIGINS matches the frontend origin</check>
+        <check>APP_ORIGIN is the public frontend URL</check>
+        <check>SMTP_HOST is set so verification and password-reset email can send</check>
+        <check>Contract addresses on the API match the deployment</check>
+      </checks>
+    </environment>
+
+  </environments>
+
+</deployment>
